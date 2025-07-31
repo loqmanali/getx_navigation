@@ -127,14 +127,21 @@ class GetPageRoute<T> extends PageRoute<T>
     final pageToBuild = _middlewareRunner.runOnPageBuildStart(page)!;
 
     if (bindingsToBind != null && bindingsToBind.isNotEmpty) {
-      for (final item in bindingsToBind) {
-        final dep = item.dependencies();
-        if (dep is List<Bind>) {
-          _child = Binds(
-            binds: dep,
-            child: _middlewareRunner.runOnPageBuilt(pageToBuild()),
-          );
+      if (bindingsToBind is List<BindingsInterface>) {
+        for (final item in bindingsToBind) {
+          final dep = item.dependencies();
+          if (dep is List<Bind>) {
+            _child = Binds(
+              binds: dep,
+              child: _middlewareRunner.runOnPageBuilt(pageToBuild()),
+            );
+          }
         }
+      } else if (bindingsToBind is List<Bind>) {
+        _child = Binds(
+          binds: bindingsToBind,
+          child: _middlewareRunner.runOnPageBuilt(pageToBuild()),
+        );
       }
     }
 
